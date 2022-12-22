@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.netflix" >
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Netflix"
+        tools:targetApi="31" >
+        <activity android:name=".Mainscreens.MovieDetails"/>
+        <activity android:name=".Mainscreens.VideoPlayer" />
+        <activity android:name=".Mainscreens.Settings" />
+        <activity android:name=".Mainscreens.Search" />
+        <activity android:name=".Mainscreens.Movies" />
+        <activity android:name=".Mainscreens.TvSeries" />
+        <activity android:name=".Activities.PaymentOverdue" />
+        <activity android:name=".Activities.PaymentGateway" />
+        <activity android:name=".Activities.StepThree" />
+        <activity android:name=".Activities.StepTwo" />
+        <activity android:name=".Activities.FinishUpAccount" />
+        <activity android:name=".Activities.ChooseYourPlan" />
+        <activity android:name=".Activities.StepOne" />
+        <activity android:name=".Mainscreens.Mainscreen" />
+        <activity android:name=".Activities.SwipeScreen" />
+        <activity android:name=".Activities.SigninActivity" />
+        <activity
+            android:name=".Activities.SplashScreen"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
