@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,11 +19,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.CompositePageTransformer;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.netflix.Adapters.LatestMoviesAdapter;
 import com.example.netflix.Adapters.LatestSeriesAdapter;
 import com.example.netflix.Adapters.TopRatedMovieAdapter;
 import com.example.netflix.Adapters.TopRatedSeriesAdapter;
+import com.example.netflix.Adapters.TrendingAdapter;
 import com.example.netflix.Helpers.CheckNetworkConfig;
 import com.example.netflix.Model.LatestMovieModel;
 import com.example.netflix.Model.MovieModel;
@@ -55,11 +60,16 @@ public class Mainscreen extends AppCompatActivity {
     TextView movie_tool_text,
             series_tool_text;
 
+    ViewPager2 viewPager2;
+
     ProgressDialog progressDialog;
     ArrayList<MovieModel> movieModelArrayList;
     ArrayList<MovieModel> topRatedArrayList;
     ArrayList<SeriesModel> seriesModelArrayList;
     ArrayList<SeriesModel> topRatedSeriesList;
+    ArrayList<MovieModel> trendingList;
+
+    Handler slidehandler = new Handler();
 
     @Override
     public void onBackPressed() {
@@ -78,6 +88,7 @@ public class Mainscreen extends AppCompatActivity {
         latest_series = findViewById(R.id.recycler_latest_series);
         top_rated_movies = findViewById(R.id.recycler_top_rated_movies);
         top_rated_series =findViewById(R.id.recycler_top_rated_series);
+        viewPager2 = findViewById(R.id.trending_viewpager);
 
         //grave all necessary views TextViews
         movie_tool_text = findViewById(R.id.movietooltext);
@@ -128,7 +139,14 @@ public class Mainscreen extends AppCompatActivity {
             alertDialog.setCanceledOnTouchOutside(false);
         }
         else{
-            movieModelArrayList = new ArrayList<>();
+
+            trendingList = new ArrayList<MovieModel>();
+            GetTrendyData trendy = new GetTrendyData();
+            trendy.execute();
+
+
+
+            movieModelArrayList = new ArrayList<MovieModel>();
             GetMovieList movieList = new GetMovieList();
             movieList.execute();
 
@@ -157,6 +175,75 @@ public class Mainscreen extends AppCompatActivity {
         });
 
     }
+
+    public class GetTrendyData extends AsyncTask<String,String,String>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            String data="";
+
+            try{
+                URL url = null;
+                HttpURLConnection httpURLConnection=null;
+                try{
+                    url = new URL("https://api.themoviedb.org/3/trending/movie/day?api_key=12247654257fe450ccbd7df2985ce877");
+                    httpURLConnection = (HttpURLConnection) url.openConnection();
+                    InputStream inputStream= httpURLConnection.getInputStream();
+                    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line ;
+                    while((line=bufferedReader.readLine())!=null){
+                        data+= line;
+                    }
+                }catch (IOException exception){
+                    exception.printStackTrace();
+                }finally {
+                    if(httpURLConnection !=null){
+                        httpURLConnection.disconnect();
+                    }
+                }
+
+            }catch (Exception exception){
+                exception.printStackTrace();
+            }
+            return data;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onCancelled(String s) {
+            super.onCancelled(s);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            trendingList.clear();
+            try {
+                JSONObject response = new JSONObject(s);
+                JSONArray movies = response.getJSONArray("results");
+                for(int i=0;i<movies.length();i++){
+                    JSONObject movie = movies.getJSONObject(i);
+                    MovieModel  movieModel = new MovieModel();
+                    Gson gson = new Gson();
+                    movieModel = gson.fromJson(movie.toString(),MovieModel.class);
+                    trendingList.add(movieModel);
+                    Log.i("img",String.valueOf("https://www.themoviedb.org/t/p/w220_and_h330_face"+movieModel.getPoster_path()));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            updateTrendingList(trendingList);
+        }
+    }
+
     public class GetMovieList extends AsyncTask<String,String ,String> {
 
         @Override
@@ -431,6 +518,43 @@ public class Mainscreen extends AppCompatActivity {
         }
     }
 
+    public void updateTrendingList(ArrayList<MovieModel>list){
+        TrendingAdapter trendingAdapter = new TrendingAdapter(
+                getApplicationContext(),
+                list,
+                viewPager2
+        );
+        viewPager2.setAdapter(trendingAdapter);
+        viewPager2.setOffscreenPageLimit(3);
+        viewPager2.setClipChildren(false);
+        viewPager2.setClipToPadding(false);
+        viewPager2.getChildAt(0).setOverScrollMode(RecyclerView.OVER_SCROLL_NEVER);
+
+        CompositePageTransformer compositePageTransformer = new CompositePageTransformer();
+        compositePageTransformer.addTransformer(new MarginPageTransformer(40));
+        compositePageTransformer.addTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float i = 1-Math.abs(position);
+                page.setScaleY(0.85f+i*0.14f);
+            }
+        });
+        viewPager2.setPageTransformer(compositePageTransformer);
+        viewPager2.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                slidehandler.removeCallbacks(sliderRunnable);
+                slidehandler.postDelayed(sliderRunnable,2000);
+            }
+        });
+    }
+    private  Runnable sliderRunnable = new Runnable() {
+        @Override
+        public void run() {
+            viewPager2.setCurrentItem(viewPager2.getCurrentItem()+1);
+        }
+    };
     public void upDateRecyclerView(ArrayList<MovieModel> list){
         LatestMoviesAdapter latestMoviesAdapter=new LatestMoviesAdapter(getApplicationContext(),list);
         latest_movies.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.HORIZONTAL,false));
@@ -454,6 +578,18 @@ public class Mainscreen extends AppCompatActivity {
         TopRatedSeriesAdapter topRatedSeriesAdapter =new TopRatedSeriesAdapter(getApplicationContext(),list);
         top_rated_series.setLayoutManager(new LinearLayoutManager(getApplicationContext(),RecyclerView.HORIZONTAL,false));
         top_rated_series.setAdapter(topRatedSeriesAdapter);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        slidehandler.removeCallbacks(sliderRunnable);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        slidehandler.postDelayed(sliderRunnable,2000);
     }
 }
 

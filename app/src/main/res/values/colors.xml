@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#000</color>
     <color name="progressbar">#C10505</color>
+    <color name="progressbar1">#FFFFFF</color>
     <color name="activedots">#C81212</color>
     <color name="inactivedots">#939292</color>
     <color name="item_selected">#fff</color>

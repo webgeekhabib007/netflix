@@ -73,7 +73,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 349/month"
+                    android:text="৳ 349/month"
                     android:textColor="#000">
 
                 </TextView>
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 649/month"
+                    android:text="৳ 649/month"
                     android:textColor="#000">
 
                 </TextView>
@@ -183,7 +183,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 799/month"
+                    android:text="৳ 799/month"
                     android:textColor="#000">
 
                 </TextView>

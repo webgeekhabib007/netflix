@@ -18,30 +18,41 @@ import com.example.netflix.R;
 
 import java.util.ArrayList;
 
-public class MovieGridLayoutAdapter extends RecyclerView.Adapter<MovieGridLayoutAdapter.MyViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.MyViewHolder> {
     Context context;
     ArrayList<MovieModel> list;
-    public MovieGridLayoutAdapter(Context context, ArrayList<MovieModel> list){
+    public SearchAdapter(Context context, ArrayList<MovieModel> list){
         this.context = context;
         this.list  = list;
     }
     @NonNull
     @Override
-    public MovieGridLayoutAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public SearchAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.grid_item_view,parent,false);
-        return new MyViewHolder(view);
+        return new SearchAdapter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieGridLayoutAdapter.MyViewHolder holder, int position) {
-        Glide
-                .with(context)
-                .load(String.valueOf("https://www.themoviedb.org/t/p/w220_and_h330_face"+list.get(position).getPoster_path().toString()))
-                .into(holder.imageView);
+    public void onBindViewHolder(@NonNull SearchAdapter.MyViewHolder holder, int position) {
 
-        holder.textView.setText(list.get(position).getTitle());
-        if(list.get(position).getRelease_date()!=null && list.get(position).getRelease_date().length()>4)holder.textView1.setText(list.get(position).getRelease_date().substring(0,4));
-        else holder.textView1.setText("null");
+        String img= list.get(position).getPoster_path();
+        String title=list.get(position).getTitle();
+        String date = list.get(position).getRelease_date();
+
+        if(img !=null){
+            Glide
+                    .with(context)
+                    .load(String.valueOf("https://www.themoviedb.org/t/p/w220_and_h330_face"+img))
+                    .into(holder.imageView);
+        }
+
+        if(title!=null){
+            holder.textView.setText(title);
+        }
+
+        if(date!=null){
+            holder.textView1.setText(date);
+        }
         holder.imageView.setOnClickListener(view->{
             Intent intent = new Intent(context, MovieDetails.class);
             intent.putExtra("img",list.get(position).getPoster_path());
@@ -68,6 +79,7 @@ public class MovieGridLayoutAdapter extends RecyclerView.Adapter<MovieGridLayout
             imageView = itemView.findViewById(R.id.img_grid_item);
             textView = itemView.findViewById(R.id.text_grid_item);
             textView1 = itemView.findViewById(R.id.text_grid_item1);
+
         }
     }
 }

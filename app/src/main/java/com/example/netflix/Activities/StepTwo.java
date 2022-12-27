@@ -69,53 +69,60 @@ public class StepTwo extends AppCompatActivity {
                 UserPassword=userpassword.getText().toString();
                 X=true;
                 if(UserEmailId.length()<10||!UserEmailId.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$"))
-                {emailiduser.setError("Enter a valid email id");
-                 X=false;}
+                {
+                    emailiduser.setError("Enter a valid email id");
+                    X=false;
+                }
                 if(UserPassword.length()<8)
-                {userpassword.setError("Password to short");
-                X=false;}
+                {
+                    userpassword.setError("Password to short");
+                    X=false;
+                }
                 if(X)
-                {progressDialog=new ProgressDialog(StepTwo.this);
+                {
+                    progressDialog=new ProgressDialog(StepTwo.this);
                     progressDialog.setMessage("Loading...");
                     progressDialog.show();
                     progressDialog.setCancelable(false);
                     firebaseAuth.signInWithEmailAndPassword(UserEmailId,UserPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful())
-                        { X=false;
-
-                            Toast.makeText(getApplicationContext(),"Please enter via the main login screen",Toast.LENGTH_SHORT).show();
-                            Intent i=new Intent(StepTwo.this,SigninActivity.class);
-                            startActivity(i);
-
-
-                        }else {
-                            if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
-                            {emailiduser.setError("Email id already registered");
-                            X=false;
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful())
+                            {
+                                X=false;
+                                Toast.makeText(getApplicationContext(),"Please enter via the main login screen",Toast.LENGTH_SHORT).show();
+                                Intent i=new Intent(StepTwo.this,SigninActivity.class);
+                                startActivity(i);
+                            }else {
+                                if(task.getException() instanceof FirebaseAuthInvalidCredentialsException)
+                                {
+                                    emailiduser.setError("Email id already registered");
+                                    X=false;
+                                    progressDialog.cancel();
+                                }
+                                if(task.getException() instanceof FirebaseNetworkException)
+                                {
+                                    Toast.makeText(getApplicationContext(),"No internet connection",Toast.LENGTH_SHORT).show();
+                                    X=false;
+                                    progressDialog.cancel();
+                                }
+                            }
+                            if(UserEmailId.length()>9
+                                    && UserPassword.length()>7
+                                    && UserEmailId.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")&& X)
+                            {
+                                Intent i=new Intent(StepTwo.this,StepThree.class);
+                                i.putExtra("PlanName",PlanName);
+                                i.putExtra("PlanCost",PlanCost);
+                                i.putExtra("PlanCostFormat",PlanCostFormat);
+                                i.putExtra("EmailId",UserEmailId);
+                                i.putExtra("Password",UserPassword);
+                                startActivity(i);
                                 progressDialog.cancel();}
-                            if(task.getException() instanceof FirebaseNetworkException)
-                            {Toast.makeText(getApplicationContext(),"No internet connection",Toast.LENGTH_SHORT).show();
-                            X=false;
-                            progressDialog.cancel();}
-                        }
-                        if(UserEmailId.length()>9 && UserPassword.length()>7&& UserEmailId.matches("^[\\w-_\\.+]*[\\w-_\\.]\\@([\\w]+\\.)+[\\w]+[\\w]$")&& X)
-                        {Intent i=new Intent(StepTwo.this,StepThree.class);
-                            i.putExtra("PlanName",PlanName);
-                            i.putExtra("PlanCost",PlanCost);
-                            i.putExtra("PlanCostFormat",PlanCostFormat);
-                            i.putExtra("EmailId",UserEmailId);
-                            i.putExtra("Password",UserPassword);
-                            startActivity(i);
-                            progressDialog.cancel();}
 
-                    }
-                });
-
+                             }
+                    });
                 }
-
-
             }
         });
         SpannableString st=new SpannableString("STEP 2 OF 3");
@@ -126,19 +133,19 @@ public class StepTwo extends AppCompatActivity {
         textView.setText(st);
 
     }
-    public void progress(){
-        final Timer timer =new Timer();
-        TimerTask timerTask= new TimerTask() {
-            @Override
-            public void run() {
-                counter++;
-                progressBar.setProgress(counter);
-                if(counter==1000){
-                    timer.cancel();
-                }
+        public void progress(){
+            final Timer timer =new Timer();
+            TimerTask timerTask= new TimerTask() {
+                @Override
+                public void run() {
+                    counter++;
+                    progressBar.setProgress(counter);
+                    if(counter==1000){
+                        timer.cancel();
+                    }
 
-            }
-        };
-        timer.schedule(timerTask,0,100);
-    }
+                }
+            };
+            timer.schedule(timerTask,0,100);
+        }
     }

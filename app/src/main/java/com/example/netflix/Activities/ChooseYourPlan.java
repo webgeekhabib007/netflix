@@ -62,21 +62,21 @@ public class ChooseYourPlan extends AppCompatActivity {
                 if(compoundButton.getId()== R.id.radiobuttonforbasic){
                     planname="Basic";
                     plancost="349";
-                    planformatofcost="₹ 349/month";
+                    planformatofcost="৳ 349/month";
                     radiostandard.setChecked(false);
                     radiopremium.setChecked(false);
                 }
                 if(compoundButton.getId()== R.id.radiobuttonforstandard){
                     planname="Standard";
                     plancost="649";
-                    planformatofcost="₹ 649/month";
+                    planformatofcost="৳ 649/month";
                     radiobasic.setChecked(false);
                     radiopremium.setChecked(false);
                 }
                 if(compoundButton.getId()== R.id.radiobuttonforpremium){
                     planname="Premium";
                     plancost="799";
-                    planformatofcost="₹ 799/month";
+                    planformatofcost="৳ 799/month";
                     radiostandard.setChecked(false);
                     radiobasic.setChecked(false);
                 }

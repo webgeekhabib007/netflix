@@ -15,6 +15,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.netflix.Helpers.CheckPayment;
+import com.example.netflix.Helpers.PaymentResultListener;
 import com.example.netflix.Mainscreens.Mainscreen;
 import com.example.netflix.R;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -23,7 +25,7 @@ import com.google.firebase.FirebaseNetworkException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.razorpay.Checkout;
+
 
 import org.json.JSONObject;
 
@@ -32,7 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PaymentOverdue extends AppCompatActivity {
+public class PaymentOverdue extends AppCompatActivity implements PaymentResultListener {
 
     TextView Signin;
     Button paybutton;
@@ -120,7 +122,6 @@ public class PaymentOverdue extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         progressDialog.setCancelable(false);
-        Checkout checkout=new Checkout();
         final Activity activity=this;
         String name=Intfirstname+Intlastname;
         try{
@@ -129,18 +130,17 @@ public class PaymentOverdue extends AppCompatActivity {
             options.put("description","APP PAYMENT");
             options.put("currency","INR");
             String payment=plancost;
-            double total=Double.parseDouble(payment);
-            total=total*100;
-            options.put("amount",total);
+            options.put("amount",payment);
             options.put("prefill.email",Intemail);
             options.put("prefill.contact",Intcontact);
-            checkout.open(activity,options);
+            CheckPayment checkPayment = new CheckPayment(this,options);
+            checkPayment.check();
 
         }catch(Exception e){
             Log.e(TAG,"error occures",e);
         }
     }
-
+    @Override
     public void onPaymentSuccess(String s) {
 
                     DocumentReference documentReference=firebaseFirestore.collection("Users").document(IntUid);
@@ -173,7 +173,7 @@ public class PaymentOverdue extends AppCompatActivity {
 
 
     }
-
+    @Override
     public void onPaymentError(int i, String s) {
         Toast.makeText(this, "payment unsucessfull", Toast.LENGTH_SHORT).show();
         progressDialog.cancel();

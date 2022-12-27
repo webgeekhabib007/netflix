@@ -19,31 +19,31 @@ import com.example.netflix.R;
 
 import java.util.ArrayList;
 
-public class TopRatedSeriesAdapter extends RecyclerView.Adapter<TopRatedSeriesAdapter.MyViewHolder>{
+public class TvSeriesGridLayoutAdapter extends RecyclerView.Adapter<TvSeriesGridLayoutAdapter.MyViewHolder> {
     Context context;
     ArrayList<SeriesModel> list;
-
-    public TopRatedSeriesAdapter(Context context, ArrayList<SeriesModel> list){
-        this.context=context;
-        this.list=list;
+    public TvSeriesGridLayoutAdapter(Context context, ArrayList<SeriesModel> list){
+        this.context = context;
+        this.list  = list;
     }
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.horizontal_item_view,parent,false);
-        return new MyViewHolder(view);
+    public TvSeriesGridLayoutAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.grid_item_view,parent,false);
+        return new TvSeriesGridLayoutAdapter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull TopRatedSeriesAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull TvSeriesGridLayoutAdapter.MyViewHolder holder, int position) {
         Glide
                 .with(context)
-                .load(String.valueOf("https://www.themoviedb.org/t/p/w220_and_h330_face"+list.get(position).getPoster_path()))
-                .into(holder.movieImg);
+                .load(String.valueOf("https://www.themoviedb.org/t/p/w220_and_h330_face"+list.get(position).getPoster_path().toString()))
+                .into(holder.imageView);
 
-        holder.title.setText(list.get(position).getName().toString());
-        holder.release.setText(list.get(position).getFirst_air_date().substring(0,4));
-        holder.movieImg.setOnClickListener(view->{
+        holder.textView.setText(list.get(position).getName());
+        if(list.get(position).getFirst_air_date()!=null && list.get(position).getFirst_air_date().length()>4)holder.textView1.setText(list.get(position).getFirst_air_date().substring(0,4));
+        else holder.textView1.setText("null");
+        holder.imageView.setOnClickListener(view->{
             Intent intent = new Intent(context, MovieDetails.class);
             intent.putExtra("img",list.get(position).getPoster_path());
             intent.putExtra("title",list.get(position).getName());
@@ -61,14 +61,14 @@ public class TopRatedSeriesAdapter extends RecyclerView.Adapter<TopRatedSeriesAd
         return list.size();
     }
 
-    static class MyViewHolder extends RecyclerView.ViewHolder{
-        ImageView movieImg;
-        TextView title,release;
+    public static class MyViewHolder extends RecyclerView.ViewHolder{
+        ImageView imageView;
+        TextView textView,textView1;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            movieImg = itemView.findViewById(R.id.img_grid_item);
-            title = itemView.findViewById(R.id.text_grid_item);
-            release=itemView.findViewById(R.id.text_grid_item1);
+            imageView = itemView.findViewById(R.id.img_grid_item);
+            textView = itemView.findViewById(R.id.text_grid_item);
+            textView1 = itemView.findViewById(R.id.text_grid_item1);
         }
     }
 }

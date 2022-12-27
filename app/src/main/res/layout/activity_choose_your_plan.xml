@@ -8,10 +8,14 @@
     <include layout="@layout/toolbar_stepone"/>
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="67dp">
+        android:layout_width="416dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="60dp"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 349/month"
+                    android:text="৳ 349/month"
                     android:textColor="#000">
 
                 </TextView>
@@ -130,7 +134,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 649/month"
+                    android:text="৳ 649/month"
                     android:textColor="#000">
 
                 </TextView>
@@ -185,7 +189,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="33dp"
                     android:layout_marginTop="40dp"
-                    android:text="₹ 799/month"
+                    android:text="৳ 799/month"
                     android:textColor="#000">
 
                 </TextView>
@@ -208,6 +212,7 @@
                 android:layout_height="66dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="60dp"
                 android:background="@color/progressbar"
                 android:text="CONTINUE"
                 android:textColor="#fff"

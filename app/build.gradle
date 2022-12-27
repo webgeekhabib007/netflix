@@ -48,8 +48,12 @@ dependencies {
     implementation 'androidx.media2:media2-widget:1.2.1'
     implementation 'androidx.media2:media2-player:1.2.1'
     implementation 'androidx.media2:media2-common:1.2.1'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation files('libs\\YouTubeAndroidPlayerApi.jar')
     annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
 }

@@ -25,6 +25,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.netflix.Helpers.CheckPayment;
+import com.example.netflix.Helpers.PaymentResultListener;
 import com.example.netflix.Mainscreens.Mainscreen;
 import com.example.netflix.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -36,8 +38,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.razorpay.Checkout;
-import com.razorpay.PaymentResultListener;
+
 
 import org.json.JSONObject;
 
@@ -69,7 +70,6 @@ public class PaymentGateway extends AppCompatActivity implements PaymentResultLi
         PlanCostFormat=i.getStringExtra("PlanCostFormat");
         UserEmailId=i.getStringExtra("EmailId");
         UserPassword=i.getStringExtra("Password");
-        Checkout.preload(getApplicationContext());
         firstnameedittext=findViewById(R.id.firstnameedittext);
         lastnameedittext=findViewById(R.id.lastnameedittext);
         contactnumberedittext=findViewById(R.id.contactnumberedittext);
@@ -94,7 +94,11 @@ public class PaymentGateway extends AppCompatActivity implements PaymentResultLi
         st.setSpan(boldspan,5,6, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         st.setSpan(boldspan1,10,11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(st);
-        SpannableString ss=new SpannableString("By checking the checkbox below, you agree to our Terms of Use, Privacy Statement, and that you are over 18. Netflix will automatically continue your membership and charge the monthly membership fee to your payment method until you cancel. You may cancel at any time to avoid future charges.");
+        SpannableString ss=new SpannableString("By checking the checkbox below, you agree to our Terms of Use," +
+                                                        " Privacy Statement, and that you are over 18." +
+                                                        " Netflix will automatically continue your membership" +
+                                                        " and charge the monthly membership fee to your payment " +
+                                                        "method until you cancel. You may cancel at any time to avoid future charges.");
         ClickableSpan clickableSpan=new ClickableSpan() {
             @Override
             public void onClick(@NonNull View view) {
@@ -139,30 +143,40 @@ public class PaymentGateway extends AppCompatActivity implements PaymentResultLi
                 progressDialog.setMessage("Loading...");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-             if(firstnameedittext.getText().toString().length()>3 && lastnameedittext.getText().toString().length()>3 && firstnameedittext.getText().toString().matches("[a-z A-Z]+") && lastnameedittext.getText().toString().matches("[a-z A-Z]+") && contactnumberedittext.getText().toString().length()==10 && iagree.isChecked()) {
+                if(firstnameedittext.getText().toString().length()>3
+                     && lastnameedittext.getText().toString().length()>3
+                     && firstnameedittext.getText().toString().matches("[a-z A-Z]+")
+                     && lastnameedittext.getText().toString().matches("[a-z A-Z]+")
+                     && contactnumberedittext.getText().toString().length()==10
+                     && iagree.isChecked()) {
 
                  startPayment();
-             }
-             else {
-                 if(firstnameedittext.getText().toString().length()<=3 ||!firstnameedittext.getText().toString().matches("[a-z A-Z]+"))
-                 {firstnameedittext.setError("Enter a valid first name");
-                     progressDialog.cancel();}
-                 if(lastnameedittext.getText().toString().length()<=3 ||!lastnameedittext.getText().toString().matches("[a-z A-Z]+"))
-                 {lastnameedittext.setError("Enter a valid last name");
-                     progressDialog.cancel();}
-                 if(contactnumberedittext.getText().toString().length()!=10)
-                 {contactnumberedittext.setError("Enter a valid 10 digit contact number");
-                     progressDialog.cancel();}
-                 if(!iagree.isChecked())
-                 {
-                     Toast.makeText(getApplicationContext(),"Please agree the policy",Toast.LENGTH_SHORT).show();
-                     progressDialog.cancel();
-                 }
-                 else
-                 { Toast.makeText(getApplicationContext(),"Please fill the correct user information",Toast.LENGTH_SHORT).show();}
-                 progressDialog.cancel();
-
-             }
+                }
+                else {
+                    if(firstnameedittext.getText().toString().length()<=3 ||!firstnameedittext.getText().toString().matches("[a-z A-Z]+"))
+                    {
+                        firstnameedittext.setError("Enter a valid first name");
+                        progressDialog.cancel();
+                    }
+                    if(lastnameedittext.getText().toString().length()<=3 ||!lastnameedittext.getText().toString().matches("[a-z A-Z]+"))
+                    {
+                        lastnameedittext.setError("Enter a valid last name");
+                        progressDialog.cancel();}
+                    if(contactnumberedittext.getText().toString().length()!=10)
+                    {
+                        contactnumberedittext.setError("Enter a valid 10 digit contact number");
+                        progressDialog.cancel();}
+                    if(!iagree.isChecked())
+                    {
+                        Toast.makeText(getApplicationContext(),"Please agree the policy",Toast.LENGTH_SHORT).show();
+                        progressDialog.cancel();
+                    }
+                    else
+                    {
+                        Toast.makeText(getApplicationContext(),"Please fill the correct user information",Toast.LENGTH_SHORT).show();
+                    }
+                    progressDialog.cancel();
+                }
 
             }
         });
@@ -170,7 +184,6 @@ public class PaymentGateway extends AppCompatActivity implements PaymentResultLi
 
     }
     public void startPayment(){
-        Checkout checkout=new Checkout();
         final Activity activity=this;
         firstname=firstnameedittext.getText().toString();
         lastname=lastnameedittext.getText().toString();
@@ -180,15 +193,14 @@ public class PaymentGateway extends AppCompatActivity implements PaymentResultLi
             JSONObject options=new JSONObject();
             options.put("name",name);
             options.put("description","APP PAYMENT");
-            options.put("currency","INR");
+            options.put("currency","BDT");
             String payment=PlanCost;
-            double total=Double.parseDouble(payment);
-            total=total*100;
-            options.put("amount",total);
+
+            options.put("amount",payment);
             options.put("prefill.email",UserEmailId);
             options.put("prefill.contact",contactnumber);
-            checkout.open(activity,options);
-
+            CheckPayment checkPayment=new CheckPayment(this,options);
+            checkPayment.check();
         }catch(Exception e){
             Log.e(TAG,"error occures",e);
         }

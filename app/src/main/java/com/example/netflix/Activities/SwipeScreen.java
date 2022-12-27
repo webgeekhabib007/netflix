@@ -68,13 +68,13 @@ public class SwipeScreen extends AppCompatActivity {
 
                 }
             });
-            signin.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i=new Intent(SwipeScreen.this, SigninActivity.class);
-                    startActivity(i);
-                }
-            });
+        signin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(SwipeScreen.this, SigninActivity.class);
+                startActivity(i);
+            }
+        });
         privacy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
